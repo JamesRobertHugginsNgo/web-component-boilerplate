@@ -1,7 +1,5 @@
 # CDN Files
 
-- https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate@1.0.0/dist/CDN-FILES.md
-- https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate@1.0.0/dist/FILES.md
 - https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate@1.0.0/dist/assets/logo.svg
 - https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate@1.0.0/dist/index.js
 - https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate@1.0.0/dist/index.min.js
