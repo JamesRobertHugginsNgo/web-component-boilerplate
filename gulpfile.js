@@ -11,26 +11,42 @@ import gulpReplace from 'gulp-replace';
 import gulpSourcemaps from 'gulp-sourcemaps';
 import gulpTerser from 'gulp-terser';
 
+// ==
+// CONSTANTS
+// ==
+
 const DEST = './dist';
 const CDN_URL_PREFIX = 'https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate';
+
+// ==
+// HELPER
+// ==
+
+function stringSrc(filename, string) {
+	const src = Stream.Readable({ objectMode: true });
+	src._read = function () {
+		this.push(new Vinyl({
+			cwd: '',
+			base: '.',
+			path: filename,
+			contents: Buffer.from(string, 'utf-8')
+		}));
+		this.push(null);
+	};
+	return src;
+}
+
+// ==
+// GLOBAL VARIABLE
+// ==
 
 const tagFlagIndex = process.argv.indexOf('--tag');
 const tagFlagValue = tagFlagIndex === -1 ? false : process.argv[tagFlagIndex + 1];
 const destValue = `${!tagFlagValue ? '' : `${CDN_URL_PREFIX}@${tagFlagValue}`}/${Path.join(DEST)}`;
 
-function stringSrc(filename, string) {
-  const src = Stream.Readable({ objectMode: true });
-  src._read = function () {
-    this.push(new Vinyl({
-      cwd: '',
-      base: '.',
-      path: filename,
-      contents: Buffer.from(string, 'utf-8')
-    }));
-    this.push(null);
-  };
-  return src;
-}
+// ==
+// TASKS
+// ==
 
 function buildSrcCss() {
 	return Gulp.src(['./src/**/*.css'])
@@ -135,13 +151,15 @@ function buildCdnFilesMd() {
 
 export default Gulp.series(
 	Gulp.parallel(
-		buildSrcCss,
-		buildSrcCssMin,
-		buildSrcHtml,
-		buildSrcHtmlMin,
-		buildSrcJs,
-		buildSrcJsMin,
-		buildOther
+		...[
+			buildSrcCss,
+			!tagFlagValue ? false : buildSrcCssMin,
+			buildSrcHtml,
+			!tagFlagValue ? false : buildSrcHtmlMin,
+			buildSrcJs,
+			!tagFlagValue ? false : buildSrcJsMin,
+			buildOther
+		].filter(Boolean)
 	),
 	buildCdnFilesMd
 );
