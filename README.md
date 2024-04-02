@@ -75,15 +75,15 @@ The `--branch` flag is ignored when used with the `--tag` flag. Dont forget to c
 ### Build With Minified Files
 
 ```
-gulp --minified
+gulp --minify
 ```
 
 This flag tells the process to also generate minified versions of the HTML, CSS and JavaScript files. Sourcemaps files are also generated for CSS and JavaScript files. Use this flag with the other flags above.
 
-### Build With Clear
+### Build With Clean
 
 ```
-gulp --clear
+gulp --clean
 ```
 
-This flag tells the process to clear the dist folder before "building" the project. This is to remove old files. Use this flag with the other flags above.
+This flag tells the process to remove the dist folder before building the project. This is to remove old files. Use this flag with the other flags above.
