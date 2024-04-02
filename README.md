@@ -75,7 +75,7 @@ The `--branch` flag is ignored when used with the `--tag` flag. Dont forget to c
 ### Build With Minified Files
 
 ```
-gulp --minified
+gulp --minify
 ```
 
 This flag tells the process to also generate minified versions of the HTML, CSS and JavaScript files. Sourcemaps files are also generated for CSS and JavaScript files. Use this flag with the other flags above.
