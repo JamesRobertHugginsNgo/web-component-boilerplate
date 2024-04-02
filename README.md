@@ -2,66 +2,88 @@
 
 A sample project for building and sharing Web Components.
 
-This project requires modern browsers, using modern JavaScript (es6), JavaScript module (esm), modern CSS and modern HTML.
+This project requires modern browsers, using modern JavaScript (es6), JavaScript module (esm), modern CSS (css3) and modern HTML (html5).
 
-This project uses absolute URLs to avoid dependency issues. This uses [GulpJS](https://gulpjs.com) (v4) to generate the final code by replacing ```{{DEST}}``` and ```{{INFIX}}``` placholder string with the correct absolute URL prefix and a possible ".min" infix. The infix is only used for minified files.
+## Absolute URLs
 
-For the absolute URL, this project uses [JSDelivr](https://www.jsdelivr.com) CDN. This CDN automatically have access to all branches and tags of public GIT repos without additional setup. After making a `git commit` and `git push`, clear the CDN cache on the [CDN's purge cache page](https://www.jsdelivr.com/tools/purge).
+This project uses absolute URLs to avoid dependency issues. This uses [GulpJS](https://gulpjs.com) (v4) to generate the final code by replacing `{{DEST}}` and ```{{INFIX}}``` placholder strings with the correct absolute URL prefix and a possible ".min" infix. The infix is used for minified files.
+
+Absolute URLs in this project uses [JSDelivr](https://www.jsdelivr.com) CDN. This CDN have access to all branches and tags of any public GitHub repos without additional configuration. Use the [CDN's purge cache page](https://www.jsdelivr.com/tools/purge) after making a `git commit` and `git push`.
+
+View the [dist/CDN-FILES.md](./dist/CDN-FILES.md) for a list absolute URLs in the repo.
 
 ## Source Folder (./src)
 
 The source folder holds a sample web component to get started with.
 
-The JavaScript file (index.js) contains the web component definition, a template HTML file that is cloned whenever a new web component is created, ad a style CSS file to provide styles for the component.
-
-Placeholder strings (```{{DEST}}``` and ```{{INFIX}}```) must be used for the build process to generate the correct absolute URL.
+Placeholder strings (`{{DEST}}` and ```{{INFIX}}```) must be used to generate correct absolute URLs. The absolute URLs are generated using GulpJS.
 
 ## Distribution Folder (./dist)
 
-The distribution folder contains the "built" web component. This contains the script that is ready to use for web development.
+The distribution folder contains the "built" web component. This contains the script that is ready to use for web development. This is "built" using GulpJS.
 
-The build process also includes minified versions and sourcemaps.
-
-A list of CDN files (CDN-FILES.md) is also generated to make it easier to find the URL for each file.
+A list of CDN files (CDN-FILES.md) is also generated to make it easier to find the absolute URL for each file.
 
 ## Test Folder (./test)
 
 The test folder is used for testing the web component. This is usually done by embedding the new web component inside an HTML and linking to the web component module.
 
-I use the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) Visual Studio Code extension to host the test page locally.
+I use the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) Visual Studio Code extension to host the test page locally. By default, the GulpJS build process adds the prefix of "/dist/" to the absolute URLs.
 
-To build the web component for local testing, use the follow:
+## Build Process Using GulpJS 4
 
-```
-gulp
-```
+[GulpJS 4](https://gulpjs.com) and gulp plugins are dev dependencies for this project. This replaces the `{{DEST}}` and ```{{INFIX}}``` placeholder strings in HTML, CSS and JavaScript files, generate minified versions and create the CDN-FILES.md file.
 
-## GulpJS (v4) Build Process
+### Install
 
-[GulpJS](https://gulpjs.com) (v4) and gulp plugins are one of the dev dependencies for this project. This replaces the ```{{DEST}}``` and ```{{INFIX}}``` placeholder strings, generate minified versions and create the CDN-FILES.md.
-
-This requires dependencies to be installed before usage. To install the dependencies, use the following command:
+This requires the dependencies to be installed before usage. To install the dependencies, use the following command:
 
 ```
 npm install
 ```
 
-When copying the boilerplate, update the CDN_URL_PREFIX constant in the gulpfile.js file to point to the correct repository.
+### Configuration
 
-To build for testing, use the following:
+When using this project as a boilerplate, update the `CDN_URL_PREFIX` constant in the gulpfile.js file to point to the correct repository.
+
+### Build For Testing
 
 ```
 gulp
 ```
 
-To use the absolute URL, use one of the following:
+The default build process. This process replaces `{{DEST}}` placeholder string with `/dist`. This should be used when testing the web component.
+
+### Build With Tag Name
 
 ```
-gulp --tag BRANCH_NAME
+gulp --tag [TAG_NAME]
 ```
+This process replaces `{{DEST}}` placeholder string with with the tag name argument. If the tag name is not provided, this process uses the version number specified on the package.json.
+
+Dont forget to commit the branch, add your tag and purge the CDN cache to have the latest code available on the CDN.
+
+### Build With Branch Name
 
 ```
-gulp --tag TAG_NAME
+gulp --branch
+```
+This process replaces `{{DEST}}` placeholder string with with `CDN_URL_PREFIX` constant and the current branch name.
+
+The `--branch` flag is ignored when used with the `--tag` flag. Dont forget to commit the branch and purge the CDN cache to have the latest code available on the CDN.
+
+### Build With Minified Files
+
+```
+gulp --minified
 ```
 
-Using the `--tag` flag generates absolute URLs to the CDN. You need to do `git commit` and `git push` soon after so the files are available on the CDN. Using `gulp --tag BRANCH_NAME` should be done on the correct branch name. Using `gulp --tag TAG_NAME` will require that tag to be created on the repo. These will be incorporated on the final absolute CDN URLs.
+This flag tells the process to also generate minified versions of the HTML, CSS and JavaScript files. Sourcemaps files are also generated for CSS and JavaScript files. Use this flag with the other flags above.
+
+### Build With Clear
+
+```
+gulp --clear
+```
+
+This flag tells the process to clear the dist folder before "building" the project. This is to remove old files. Use this flag with the other flags above.
