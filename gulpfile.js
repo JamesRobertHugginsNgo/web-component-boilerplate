@@ -1,6 +1,7 @@
-import Fs from 'fs/promises';
+import ChildProcess from 'node:child_process';
+import Fs from 'node:fs/promises';
 import Path from 'node:path';
-import Stream from 'stream';
+import Stream from 'node:stream';
 import Vinyl from 'vinyl';
 
 import Gulp from 'gulp';
@@ -16,10 +17,10 @@ import gulpTerser from 'gulp-terser';
 // ==
 
 const DEST = './dist';
-const CDN_URL_PREFIX = 'https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate';
+const CDN_URL_PREFIX = 'https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/web-component-boilerplate@';
 
 // ==
-// HELPER
+// HELPER GULP PLUGIN
 // ==
 
 function stringSrc(filename, string) {
@@ -40,13 +41,66 @@ function stringSrc(filename, string) {
 // GLOBAL VARIABLE
 // ==
 
-const tagFlagIndex = process.argv.indexOf('--tag');
-const tagFlagValue = tagFlagIndex === -1 ? false : process.argv[tagFlagIndex + 1];
-const destValue = `${!tagFlagValue ? '' : `${CDN_URL_PREFIX}@${tagFlagValue}`}/${Path.join(DEST)}`;
+const minify = process.argv.indexOf('--minify') !== -1;
+let destValue;
 
 // ==
 // TASKS
 // ==
+
+function setup() {
+	return Promise.resolve().then(() => {
+		if (process.argv.indexOf('--clear') !== -1) {
+			return Fs.rm(DEST, { recursive: true });
+		}
+	}).then(() => {
+		const tagFlagIndex = process.argv.indexOf('--tag');
+		if (tagFlagIndex !== -1) {
+			const tagFlagValue = process.argv[tagFlagIndex + 1];
+
+			if (!tagFlagValue || /^--/.test(tagFlagValue)) {
+				return Fs.readFile('./package.json', { encoding: 'utf8' }).then((content) => {
+					return `${CDN_URL_PREFIX}${JSON.parse(content).version}`;
+				});
+			}
+
+			return `${CDN_URL_PREFIX}${tagFlagValue}`;
+		}
+
+		const branchFlagIndex = process.argv.indexOf('--branch');
+		if (branchFlagIndex !== -1) {
+			return new Promise((resolve, reject) => {
+				ChildProcess.exec('git rev-parse --abbrev-ref HEAD', (error, stdout) => {
+					if (error) {
+						reject(error);
+						return;
+					}
+					resolve(`${CDN_URL_PREFIX}${stdout.replace(/(\r\n|\n|\r)/gm, '')}`);
+				});
+			});
+		}
+	}).then((prefix = '') => {
+		destValue = `${prefix}/${Path.join(DEST)}`;
+	});
+}
+
+function buildSrcHtml() {
+	return Gulp.src(['./src/**/*.html'])
+		.pipe(gulpReplace('{{DEST}}', destValue))
+		.pipe(gulpReplace('{{INFIX}}', ''))
+		.pipe(Gulp.dest(DEST));
+}
+
+function buildSrcHtmlMin() {
+	return Gulp.src(['./src/**/*.html'])
+		.pipe(gulpRename((path) => {
+			path.basename = path.basename + '.min';
+		}))
+		.pipe(gulpReplace('{{DEST}}', destValue))
+		.pipe(gulpReplace('{{INFIX}}', '.min'))
+		.pipe(GulpHtmlmin({ collapseWhitespace: true }))
+		.pipe(Gulp.dest(DEST));
+}
 
 function buildSrcCss() {
 	return Gulp.src(['./src/**/*.css'])
@@ -65,24 +119,6 @@ function buildSrcCssMin() {
 		.pipe(gulpSourcemaps.init())
 		.pipe(GulpCleanCss())
 		.pipe(gulpSourcemaps.write('.'))
-		.pipe(Gulp.dest(DEST));
-}
-
-function buildSrcHtml() {
-	return Gulp.src(['./src/**/*.html'])
-		.pipe(gulpReplace('{{DEST}}', destValue))
-		.pipe(gulpReplace('{{INFIX}}', ''))
-		.pipe(Gulp.dest(DEST));
-}
-
-function buildSrcHtmlMin() {
-	return Gulp.src(['./src/**/*.html'])
-		.pipe(gulpRename((path) => {
-			path.basename = path.basename + '.min';
-		}))
-		.pipe(gulpReplace('{{DEST}}', destValue))
-		.pipe(gulpReplace('{{INFIX}}', '.min'))
-		.pipe(GulpHtmlmin({ collapseWhitespace: true }))
 		.pipe(Gulp.dest(DEST));
 }
 
@@ -150,14 +186,15 @@ function buildCdnFilesMd() {
 }
 
 export default Gulp.series(
+	setup,
 	Gulp.parallel(
 		...[
-			buildSrcCss,
-			!tagFlagValue ? false : buildSrcCssMin,
 			buildSrcHtml,
-			!tagFlagValue ? false : buildSrcHtmlMin,
+			minify && buildSrcHtmlMin,
+			buildSrcCss,
+			minify && buildSrcCssMin,
 			buildSrcJs,
-			!tagFlagValue ? false : buildSrcJsMin,
+			minify && buildSrcJsMin,
 			buildOther
 		].filter(Boolean)
 	),
