@@ -9,7 +9,6 @@ import GulpCleanCss from 'gulp-clean-css';
 import GulpHtmlmin from 'gulp-htmlmin';
 import gulpRename from 'gulp-rename';
 import gulpReplace from 'gulp-replace';
-import gulpSourcemaps from 'gulp-sourcemaps';
 import gulpTerser from 'gulp-terser';
 
 // ==
@@ -110,16 +109,14 @@ function buildSrcCss() {
 }
 
 function buildSrcCssMin() {
-	return Gulp.src(['./src/**/*.css'])
+	return Gulp.src(['./src/**/*.css'], { sourcemaps: true })
 		.pipe(gulpRename((path) => {
 			path.basename = path.basename + '.min';
 		}))
 		.pipe(gulpReplace('{{DEST}}', destValue))
 		.pipe(gulpReplace('{{INFIX}}', '.min'))
-		.pipe(gulpSourcemaps.init())
 		.pipe(GulpCleanCss())
-		.pipe(gulpSourcemaps.write('.'))
-		.pipe(Gulp.dest(DEST));
+		.pipe(Gulp.dest(DEST, { sourcemaps: '.' }));
 }
 
 function buildSrcJs() {
@@ -130,16 +127,14 @@ function buildSrcJs() {
 }
 
 function buildSrcJsMin() {
-	return Gulp.src(['./src/**/*.js'])
+	return Gulp.src(['./src/**/*.js'], { sourcemaps: true })
 		.pipe(gulpRename((path) => {
 			path.basename = path.basename + '.min';
 		}))
 		.pipe(gulpReplace('{{DEST}}', destValue))
 		.pipe(gulpReplace('{{INFIX}}', '.min'))
-		.pipe(gulpSourcemaps.init())
 		.pipe(gulpTerser())
-		.pipe(gulpSourcemaps.write('.'))
-		.pipe(Gulp.dest(DEST));
+		.pipe(Gulp.dest(DEST, { sourcemaps: '.' }));
 }
 
 function buildOther() {
