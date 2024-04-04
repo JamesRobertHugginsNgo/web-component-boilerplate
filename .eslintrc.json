@@ -1,23 +1,11 @@
 {
     "env": {
-        "es2021": true,
-        "node": true
+        "browser": true,
+        "es2021": true
     },
     "extends": "eslint:recommended",
-    "ignorePatterns": [
-        "dist/**/*"
-    ],
-    "overrides": [
-        {
-            "env": {
-                "browser": true,
-                "node": false
-            },
-            "files": [
-                "src/**/*"
-            ]
-        }
-    ],
+    "ignorePatterns": [],
+    "overrides": [],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module"
