@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +9,22 @@
 
 	<link rel="stylesheet" href="./style.css">
 </head>
-<body>
-	<test-component>Universe</test-component>
-	<test-component greeting="Bonjour" class="alt">Univers</test-component>
-	<script type="module" src="../index.js"></script>
-</body>
-</html>
 
+<body>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+	<simple-component>World</simple-component>
+	<simple-component greeting="Bonjour" class="alt">World</simple-component>
+	<simple-component id="third">World</simple-component>
+
+	<mutating-component id="forth"></mutating-component>
+	<mutating-component>
+		<a href="#">Home</a>
+		<a href="#">Directory</a>
+	</mutating-component>
+	<mutating-component id="sixth"></mutating-component>
+
+	<script type="module" src="./script.js"></script>
+</body>
+
+</html>
