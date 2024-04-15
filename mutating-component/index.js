@@ -1,3 +1,5 @@
+import makeHashCode from '../utilities/make-hash-code.js';
+
 // ==
 // TEMPLATE(S)
 // ==
@@ -5,6 +7,12 @@
 const templateElement = document.createElement('template');
 templateElement.innerHTML = /* html */ `
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/bootstrap@main/dist/css/bootstrap.min.css">
+
+	<style>
+		:host {
+			display: block;
+		}
+	</style>
 
 	<div class="container">
 		<nav aria-label="breadcrumb">
@@ -41,8 +49,27 @@ customElements.define('mutating-component', class extends HTMLElement {
 	// --
 
 	#breadcrumbElement;
+	#innerHtmlHashCode;
 	#items;
 	#mutationObserver;
+
+	// --
+	// PRIVATE METHOD(S)
+	// --
+
+	#getMutationRecords() {
+		return [{
+			type: 'childList',
+			target: this,
+			attributeName: null,
+			attributeNamespace: null,
+			addedNodes: this.childNodes,
+			removedNodes: [],
+			oldValue: null,
+			nextSibling: null,
+			previousSibling: null
+		}];
+	}
 
 	// --
 	// PUBLIC PROPERTY(IES)
@@ -52,7 +79,7 @@ customElements.define('mutating-component', class extends HTMLElement {
 		return this.#items;
 	}
 	set items(newValue) {
-		console.log('SET - ITEMS');
+		console.log('SET - ITEMS', newValue);
 
 		this.#items = newValue;
 
@@ -100,8 +127,12 @@ customElements.define('mutating-component', class extends HTMLElement {
 		this.#breadcrumbElement = this.shadowRoot.querySelector('.breadcrumb');
 
 		this.#mutationObserver = new MutationObserver((mutationRecords) => {
+			this.#innerHtmlHashCode = makeHashCode(this.innerHTML);
 			this.mutationCallback(mutationRecords);
 		});
+
+		this.#innerHtmlHashCode = makeHashCode(this.innerHTML);
+		this.mutationCallback(this.#getMutationRecords());
 	}
 
 	connectedCallback() {
@@ -109,17 +140,12 @@ customElements.define('mutating-component', class extends HTMLElement {
 		console.log('Custom element added to page.');
 		console.groupEnd();
 
-		this.mutationCallback([{
-			type: 'childList',
-			target: this,
-			attributeName: null,
-			attributeNamespace: null,
-			addedNodes: this.childNodes,
-			removedNodes: [],
-			oldValue: null,
-			nextSibling: null,
-			previousSibling: null
-		}]);
+		const innerHtmlHashCode = makeHashCode(this.innerHTML);
+		if (innerHtmlHashCode !== this.#innerHtmlHashCode) {
+			this.#innerHtmlHashCode = innerHtmlHashCode;
+			this.mutationCallback(this.#getMutationRecords());
+		}
+
 		this.#mutationObserver.observe(this, { childList: true });
 	}
 
@@ -146,7 +172,12 @@ customElements.define('mutating-component', class extends HTMLElement {
 
 		switch (name) {
 			case 'items':
-				this.items = newValue;
+				try {
+					this.items = JSON.parse(newValue);
+				} catch (error) {
+					console.log(error);
+					this.items = null;
+				}
 				break;
 		}
 	}
