@@ -1,7 +1,4 @@
-import '../index.js';
-
-const third = document.getElementById('third');
-third.greeting = 'Holla';
+import '../../index.js';
 
 const forth = document.getElementById('forth');
 forth.items = [{ text: 'Home', link: '#' }];

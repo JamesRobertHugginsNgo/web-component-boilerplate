@@ -110,12 +110,10 @@ customElements.define('mutating-component', class extends HTMLElement {
 			console.log('MUTATION OBSERVER');
 
 			this.#childNodes = Array.from(this.#childNodes);
-			console.log('#CHILDNODES', this.#childNodes);
 			this.mutationCallback(mutationRecords);
 		});
 
 		this.#childNodes = Array.from(this.#childNodes);
-		console.log('#CHILDNODES', this.#childNodes);
 		this.mutationCallback();
 	}
 
