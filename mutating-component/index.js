@@ -1,5 +1,3 @@
-import makeHashCode from '../utilities/make-hash-code.js';
-
 // ==
 // TEMPLATE(S)
 // ==
@@ -49,27 +47,9 @@ customElements.define('mutating-component', class extends HTMLElement {
 	// --
 
 	#breadcrumbElement;
-	#innerHtmlHashCode;
+	#childNodes = [];
 	#items;
 	#mutationObserver;
-
-	// --
-	// PRIVATE METHOD(S)
-	// --
-
-	#getMutationRecords() {
-		return [{
-			type: 'childList',
-			target: this,
-			attributeName: null,
-			attributeNamespace: null,
-			addedNodes: this.childNodes,
-			removedNodes: [],
-			oldValue: null,
-			nextSibling: null,
-			previousSibling: null
-		}];
-	}
 
 	// --
 	// PUBLIC PROPERTY(IES)
@@ -119,7 +99,7 @@ customElements.define('mutating-component', class extends HTMLElement {
 	constructor() {
 		super();
 
-		console.log('CONSTRUCTOR');
+		console.log('CONSTRUCTOR', this);
 
 		this.attachShadow({ mode: 'open' });
 		this.shadowRoot.appendChild(templateElement.content.cloneNode(true));
@@ -127,12 +107,14 @@ customElements.define('mutating-component', class extends HTMLElement {
 		this.#breadcrumbElement = this.shadowRoot.querySelector('.breadcrumb');
 
 		this.#mutationObserver = new MutationObserver((mutationRecords) => {
-			this.#innerHtmlHashCode = makeHashCode(this.innerHTML);
+			console.log('MUTATION OBSERVER');
+
+			this.#childNodes = Array.from(this.#childNodes);
 			this.mutationCallback(mutationRecords);
 		});
 
-		this.#innerHtmlHashCode = makeHashCode(this.innerHTML);
-		this.mutationCallback(this.#getMutationRecords());
+		this.#childNodes = Array.from(this.#childNodes);
+		this.mutationCallback();
 	}
 
 	connectedCallback() {
@@ -140,10 +122,11 @@ customElements.define('mutating-component', class extends HTMLElement {
 		console.log('Custom element added to page.');
 		console.groupEnd();
 
-		const innerHtmlHashCode = makeHashCode(this.innerHTML);
-		if (innerHtmlHashCode !== this.#innerHtmlHashCode) {
-			this.#innerHtmlHashCode = innerHtmlHashCode;
-			this.mutationCallback(this.#getMutationRecords());
+		if (this.#childNodes.length !== this.childNodes.length || !this.#childNodes.every((node, index) => {
+			return node === this.childNodes[index];
+		})) {
+			this.#childNodes = Array.from(this.childNodes);
+			this.mutationCallback();
 		}
 
 		this.#mutationObserver.observe(this, { childList: true });
