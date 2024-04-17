@@ -23,10 +23,10 @@ templateElement.innerHTML = /* html */ `
 `;
 
 // ==
-// CUSTOM ELEMENTS
+// CUSTOM ELEMENT(S)
 // ==
 
-customElements.define('input-component', class extends HTMLElement {
+customElements.define('formfield-component', class extends HTMLElement {
 
 	// --
 	// STATIC PROPERTY(IES)
@@ -40,7 +40,7 @@ customElements.define('input-component', class extends HTMLElement {
 	// --
 
 	#inputElement;
-	#internals;
+	#elementInternals;
 	#readonly;
 	#required;
 
@@ -49,7 +49,7 @@ customElements.define('input-component', class extends HTMLElement {
 	// --
 
 	#setValidity() {
-		this.#internals.setValidity(
+		this.#elementInternals.setValidity(
 			this.#inputElement.validity,
 			this.#inputElement.validationMessage,
 			this.#inputElement
@@ -61,9 +61,13 @@ customElements.define('input-component', class extends HTMLElement {
 	// --
 
 	get readonly() {
+		console.log('GET - READONLY');
+
 		return this.#readonly;
 	}
 	set readonly(newValue) {
+		console.log('SET - READONLY');
+
 		this.#readonly = newValue;
 
 		if (this.#readonly === null) {
@@ -76,9 +80,13 @@ customElements.define('input-component', class extends HTMLElement {
 	}
 
 	get required() {
+		console.log('GET - REQUIRED');
+
 		return this.#required;
 	}
 	set required(newValue) {
+		console.log('SET - REQUIRED');
+
 		this.#required = newValue;
 
 		if (this.#required === null) {
@@ -88,6 +96,26 @@ customElements.define('input-component', class extends HTMLElement {
 		}
 
 		this.#setValidity();
+	}
+
+	get validity() {
+		return this.#elementInternals.validity;
+	}
+
+	get validationMessage() {
+		return this.#elementInternals.validationMessage;
+	}
+
+	// --
+	// PUBLIC METHOD(S)
+	// --
+
+	checkValidity() {
+		return this.#elementInternals.checkValidity();
+	}
+
+	reportValidity() {
+		return this.#elementInternals.reportValidity();
 	}
 
 	// --
@@ -105,12 +133,11 @@ customElements.define('input-component', class extends HTMLElement {
 		});
 		this.shadowRoot.appendChild(templateElement.content.cloneNode(true));
 
+		this.#elementInternals = this.attachInternals();
 		this.#inputElement = this.shadowRoot.querySelector('input');
-
-		this.#internals = this.attachInternals();
 		this.#setValidity();
 		this.#inputElement.addEventListener('input', () => {
-			this.#internals.setFormValue(this.#inputElement.value);
+			this.#elementInternals.setFormValue(this.#inputElement.value);
 			this.#setValidity();
 		});
 	}

@@ -11,13 +11,19 @@
 <body>
 	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
-	<mutating-component id="forth"></mutating-component>
-	<mutating-component>
-		<a href="#">Home</a>
-		<a href="#">Directory</a>
-	</mutating-component>
-	<mutating-component id="sixth"></mutating-component>
-	<mutating-component items='[{"text":"Home","link":"#"},{"text":"Directory","link":"#"},{"text":"Page","link":"#"},{"text":"Section","link":"#"}]'></mutating-component>
+	<form>
+		<p>
+			<label for="input1">Text Input</label>
+			<formfield-component id="input1" name="input1"></formfield-component>
+		</p>
+		<p>
+			<label for="input2">Text Input</label>
+			<formfield-component id="input2" name="input2" required></formfield-component>
+		</p>
+		<p>
+			<button>Submit</button>
+		</p>
+	</form>
 
 	<script type="module" src="./script.js"></script>
 </body>

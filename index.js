@@ -1,3 +1,4 @@
-import './simple-component/index.js';
-import './mutating-component/index.js';
-import './input-component/index.js';
+import './basic-component/index.js';
+import './property-component/index.js';
+import './innerhtml-component/index.js';
+import './formfield-component/index.js';

@@ -31,10 +31,10 @@ activeItemTemplateElement.innerHTML = /* html */ `
 `;
 
 // ==
-// CUSTOM ELEMENTS
+// CUSTOM ELEMENT(S)
 // ==
 
-customElements.define('mutating-component', class extends HTMLElement {
+customElements.define('innerhtml-component', class extends HTMLElement {
 
 	// --
 	// STATIC PROPERTY(IES)
@@ -56,10 +56,12 @@ customElements.define('mutating-component', class extends HTMLElement {
 	// --
 
 	get items() {
+		console.log('GET - ITEMS');
+
 		return this.#items;
 	}
 	set items(newValue) {
-		console.log('SET - ITEMS', newValue);
+		console.log('SET - ITEMS');
 
 		this.#items = newValue;
 
@@ -107,8 +109,6 @@ customElements.define('mutating-component', class extends HTMLElement {
 		this.#breadcrumbElement = this.shadowRoot.querySelector('.breadcrumb');
 
 		this.#mutationObserver = new MutationObserver((mutationRecords) => {
-			console.log('MUTATION OBSERVER');
-
 			this.#childNodes = Array.from(this.#childNodes);
 			this.mutationCallback(mutationRecords);
 		});
