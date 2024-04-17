@@ -23,40 +23,24 @@ templateElement.innerHTML = /* html */ `
 `;
 
 // ==
-// CUSTOM ELEMENTS
+// CUSTOM ELEMENT(S)
 // ==
 
-customElements.define('simple-component', class extends HTMLElement {
+customElements.define('basic-component', class extends HTMLElement {
 
 	// --
 	// STATIC PROPERTY(IES)
 	// --
 
-	static observedAttributes = ['greeting'];
+	static observedAttributes = [
+		'greeting'
+	];
 
 	// --
 	// PRIVATE PROPERTY(IES)
 	// --
 
-	#greeting;
 	#greetingElement;
-
-	// --
-	// PUBLIC PROPERTY(IES)
-	// --
-
-	get greeting() {
-		return this.#greeting;
-	}
-	set greeting(newValue) {
-		this.#greeting = newValue;
-
-		if (!this.#greeting) {
-			this.#greetingElement.textContent = 'Hello';
-		} else {
-			this.#greetingElement.textContent = this.#greeting;
-		}
-	}
 
 	// --
 	// LIFE CYCLE METHOD(S)
@@ -100,7 +84,11 @@ customElements.define('simple-component', class extends HTMLElement {
 
 		switch (name) {
 			case 'greeting':
-				this.greeting = newValue;
+				if (!newValue) {
+					this.#greetingElement.textContent = 'Hello';
+				} else {
+					this.#greetingElement.textContent = newValue;
+				}
 				break;
 		}
 	}
