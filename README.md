@@ -16,3 +16,7 @@ Use the following for a web component friendly Bootstrap 5:
 ```
 
 A test folder is included for testing web components.
+
+## GITHub Page
+
+https://jamesroberthugginsngo.github.io/web-component-boilerplate/
