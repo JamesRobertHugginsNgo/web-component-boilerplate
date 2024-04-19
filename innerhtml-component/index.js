@@ -47,9 +47,7 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 	// --
 
 	#breadcrumbElement;
-	#childNodes = [];
 	#items;
-	#mutationObserver;
 
 	// --
 	// PUBLIC PROPERTY(IES)
@@ -108,12 +106,9 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 
 		this.#breadcrumbElement = this.shadowRoot.querySelector('.breadcrumb');
 
-		this.#mutationObserver = new MutationObserver((mutationRecords) => {
-			this.#childNodes = Array.from(this.#childNodes);
+		new MutationObserver((mutationRecords) => {
 			this.mutationCallback(mutationRecords);
-		});
-
-		this.#childNodes = Array.from(this.#childNodes);
+		}).observe(this, { childList: true });
 		this.mutationCallback();
 	}
 
@@ -121,23 +116,12 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 		console.group('CONNECTED CALLBACK');
 		console.log('Custom element added to page.');
 		console.groupEnd();
-
-		if (this.#childNodes.length !== this.childNodes.length || !this.#childNodes.every((node, index) => {
-			return node === this.childNodes[index];
-		})) {
-			this.#childNodes = Array.from(this.childNodes);
-			this.mutationCallback();
-		}
-
-		this.#mutationObserver.observe(this, { childList: true });
 	}
 
 	disconnectedCallback() {
 		console.group('DISCONNECTED CALLBACK');
 		console.log('Custom element removed from page.');
 		console.groupEnd();
-
-		this.#mutationObserver.disconnect();
 	}
 
 	adoptedCallback() {
