@@ -26,14 +26,17 @@ templateElement.innerHTML = /* html */ `
 // CUSTOM ELEMENT(S)
 // ==
 
-customElements.define('formfield-component', class extends HTMLElement {
+class FormFieldComponent extends HTMLElement {
 
 	// --
 	// STATIC PROPERTY(IES)
 	// --
 
 	static formAssociated = true;
-	static observedAttributes = ['readonly', 'required'];
+	static observedAttributes = [
+		'readonly',
+		'required'
+	];
 
 	// --
 	// PRIVATE PROPERTY(IES)
@@ -61,12 +64,12 @@ customElements.define('formfield-component', class extends HTMLElement {
 	// --
 
 	get readonly() {
-		console.log('GET - READONLY');
+		console.log('GET READONLY', this);
 
 		return this.#readonly;
 	}
 	set readonly(newValue) {
-		console.log('SET - READONLY');
+		console.log('SET READONLY', this);
 
 		this.#readonly = newValue;
 
@@ -80,12 +83,12 @@ customElements.define('formfield-component', class extends HTMLElement {
 	}
 
 	get required() {
-		console.log('GET - REQUIRED');
+		console.log('GET REQUIRED', this);
 
 		return this.#required;
 	}
 	set required(newValue) {
-		console.log('SET - REQUIRED');
+		console.log('SET REQUIRED', this);
 
 		this.#required = newValue;
 
@@ -99,10 +102,14 @@ customElements.define('formfield-component', class extends HTMLElement {
 	}
 
 	get validity() {
+		console.log('GET VALIDITY', this);
+
 		return this.#elementInternals.validity;
 	}
 
 	get validationMessage() {
+		console.log('GET VALIDATION MESSAGE', this);
+
 		return this.#elementInternals.validationMessage;
 	}
 
@@ -125,7 +132,7 @@ customElements.define('formfield-component', class extends HTMLElement {
 	constructor() {
 		super();
 
-		console.log('CONSTRUCTOR');
+		console.log('CONSTRUCTOR', this);
 
 		this.attachShadow({
 			mode: 'open',
@@ -134,6 +141,7 @@ customElements.define('formfield-component', class extends HTMLElement {
 		this.shadowRoot.appendChild(templateElement.content.cloneNode(true));
 
 		this.#elementInternals = this.attachInternals();
+
 		this.#inputElement = this.shadowRoot.querySelector('input');
 		this.#setValidity();
 		this.#inputElement.addEventListener('input', () => {
@@ -143,25 +151,26 @@ customElements.define('formfield-component', class extends HTMLElement {
 	}
 
 	connectedCallback() {
-		console.group('CONNECTED CALLBACK');
+		console.group('CONNECTED CALLBACK', this);
 		console.log('Custom element added to page.');
+		console.log(this.#elementInternals.form);
 		console.groupEnd();
 	}
 
 	disconnectedCallback() {
-		console.group('DISCONNECTED CALLBACK');
+		console.group('DISCONNECTED CALLBACK', this);
 		console.log('Custom element removed from page.');
 		console.groupEnd();
 	}
 
 	adoptedCallback() {
-		console.group('ADOPTED CALLBACK');
+		console.group('ADOPTED CALLBACK', this);
 		console.log('Custom element moved to new page.');
 		console.groupEnd();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		console.group('ATTRIBUTE CHANGED CALLBACK');
+		console.group('ATTRIBUTE CHANGED CALLBACK', this);
 		console.log('NAME', name);
 		console.log('OLD VALUE', oldValue);
 		console.log('NEW VALUE', newValue);
@@ -176,4 +185,10 @@ customElements.define('formfield-component', class extends HTMLElement {
 				break;
 		}
 	}
-});
+}
+
+// ==
+// CUSTOM ELEMENT(S)
+// ==
+
+customElements.define('form-field-component', FormFieldComponent);

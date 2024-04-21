@@ -12,12 +12,10 @@ templateElement.innerHTML = /* html */ `
 		}
 	</style>
 
-	<div class="container">
-		<nav aria-label="breadcrumb">
-			<ol class="breadcrumb">
-			</ol>
-		</nav>
-	</div>
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+		</ol>
+	</nav>
 `;
 
 const itemTemplateElement = document.createElement('template');
@@ -31,10 +29,10 @@ activeItemTemplateElement.innerHTML = /* html */ `
 `;
 
 // ==
-// CUSTOM ELEMENT(S)
+// CLASS(ES)
 // ==
 
-customElements.define('innerhtml-component', class extends HTMLElement {
+class MutatingComponent extends HTMLElement {
 
 	// --
 	// STATIC PROPERTY(IES)
@@ -54,12 +52,12 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 	// --
 
 	get items() {
-		console.log('GET - ITEMS');
+		console.log('GET ITEMS', this);
 
 		return this.#items;
 	}
 	set items(newValue) {
-		console.log('SET - ITEMS');
+		console.log('SET ITEMS', this);
 
 		this.#items = newValue;
 
@@ -78,7 +76,7 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 			if (index + 1 === this.#items.length) {
 				const { text } = item;
 				const documentFragment = activeItemTemplateElement.content.cloneNode(true);
-				documentFragment.querySelector('.breadcrumb-item').textContent = text;
+				documentFragment.firstElementChild.textContent = text;
 				this.#breadcrumbElement.appendChild(documentFragment);
 				continue;
 			}
@@ -119,19 +117,19 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-		console.group('DISCONNECTED CALLBACK');
+		console.group('DISCONNECTED CALLBACK', this);
 		console.log('Custom element removed from page.');
 		console.groupEnd();
 	}
 
 	adoptedCallback() {
-		console.group('ADOPTED CALLBACK');
+		console.group('ADOPTED CALLBACK', this);
 		console.log('Custom element moved to new page.');
 		console.groupEnd();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		console.group('ATTRIBUTE CHANGED CALLBACK');
+		console.group('ATTRIBUTE CHANGED CALLBACK', this);
 		console.log('NAME', name);
 		console.log('OLD VALUE', oldValue);
 		console.log('NEW VALUE', newValue);
@@ -150,7 +148,7 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 	}
 
 	mutationCallback(mutationRecords) {
-		console.group('MUTATION CALLBACK');
+		console.group('MUTATION CALLBACK', this);
 		console.log('MUTATION RECORDS', mutationRecords);
 		console.groupEnd();
 
@@ -165,4 +163,10 @@ customElements.define('innerhtml-component', class extends HTMLElement {
 		}
 		this.items = items;
 	}
-});
+}
+
+// ==
+// CUSTOM ELEMENT(S)
+// ==
+
+customElements.define('mutating-component', MutatingComponent);

@@ -16,17 +16,16 @@ templateElement.innerHTML = /* html */ `
 		}
 	</style>
 
-	<div class="container">
-		<p><img src="${import.meta.resolve('./assets/logo.svg')}" alt=""></p>
-		<p><span id="greeting">Hello</span> <slot>World</slot></p>
-	</div>
+	<p><img src="${import.meta.resolve('./assets/logo.svg')}" alt="Logo"></p>
+
+	<p><span>Hello</span> <slot>world</slot></p>
 `;
 
 // ==
-// CUSTOM ELEMENT(S)
+// CLASS(ES)
 // ==
 
-customElements.define('basic-component', class extends HTMLElement {
+class SimpleComponent extends HTMLElement {
 
 	// --
 	// STATIC PROPERTY(IES)
@@ -40,7 +39,29 @@ customElements.define('basic-component', class extends HTMLElement {
 	// PRIVATE PROPERTY(IES)
 	// --
 
+	#greeting;
 	#greetingElement;
+
+	// --
+	// PUBLIC PROPERTY(IES)
+	// --
+
+	get greeting() {
+		console.log('GET GREETING', this);
+
+		return this.#greeting;
+	}
+	set greeting(newValue) {
+		console.log('SET GREETING', this);
+
+		this.#greeting = newValue;
+
+		if (!this.#greeting) {
+			this.#greetingElement.textContent = 'Hello';
+		} else {
+			this.#greetingElement.textContent = this.#greeting;
+		}
+	}
 
 	// --
 	// LIFE CYCLE METHOD(S)
@@ -49,34 +70,34 @@ customElements.define('basic-component', class extends HTMLElement {
 	constructor() {
 		super();
 
-		console.log('CONSTRUCTOR');
+		console.log('CONSTRUCTOR', this);
 
 		this.attachShadow({ mode: 'open' });
 		this.shadowRoot.appendChild(templateElement.content.cloneNode(true));
 
-		this.#greetingElement = this.shadowRoot.getElementById('greeting');
+		this.#greetingElement = this.shadowRoot.querySelector('span');
 	}
 
 	connectedCallback() {
-		console.group('CONNECTED CALLBACK');
+		console.group('CONNECTED CALLBACK', this);
 		console.log('Custom element added to page.');
 		console.groupEnd();
 	}
 
 	disconnectedCallback() {
-		console.group('DISCONNECTED CALLBACK');
+		console.group('DISCONNECTED CALLBACK', this);
 		console.log('Custom element removed from page.');
 		console.groupEnd();
 	}
 
 	adoptedCallback() {
-		console.group('ADOPTED CALLBACK');
+		console.group('ADOPTED CALLBACK', this);
 		console.log('Custom element moved to new page.');
 		console.groupEnd();
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
-		console.group('ATTRIBUTE CHANGED CALLBACK');
+		console.group('ATTRIBUTE CHANGED CALLBACK', this);
 		console.log('NAME', name);
 		console.log('OLD VALUE', oldValue);
 		console.log('NEW VALUE', newValue);
@@ -84,12 +105,14 @@ customElements.define('basic-component', class extends HTMLElement {
 
 		switch (name) {
 			case 'greeting':
-				if (!newValue) {
-					this.#greetingElement.textContent = 'Hello';
-				} else {
-					this.#greetingElement.textContent = newValue;
-				}
+				this.greeting = newValue;
 				break;
 		}
 	}
-});
+}
+
+// ==
+// CUSTOM ELEMENT(S)
+// ==
+
+customElements.define('simple-component', SimpleComponent);
