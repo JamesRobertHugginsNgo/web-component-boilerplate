@@ -1,4 +1,4 @@
-# Web Component Boilerplate v2
+# Web Component Boilerplate v3
 
 A simple boilerplat for native web component projects.
 
