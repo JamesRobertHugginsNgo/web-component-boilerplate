@@ -55,9 +55,11 @@ I have forked the Bootstrap 5 repo, modifying the CSS by replacing `:root` and `
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/JamesRobertHugginsNgo/bootstrap@main/dist/css/bootstrap.min.css">
 ```
 
-### GitHub Page
+### Host Your Code
 
-When using github, you can configure a github page to host your code. Optionally you can use [jsdelivr.net](https://www.jsdelivr.com). Use the `README.md` to link to provide documentations and links to the files.
+When using github, you can configure a github page to host your code. You can also use [jsdelivr.net](https://www.jsdelivr.com), it has the added advantage of accessing multiple git branches and tags.
+
+Use the `README.md` to link to documentations, tests and code.
 
 ## GITHub Page
 
